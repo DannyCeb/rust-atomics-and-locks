@@ -30,16 +30,19 @@ fn main() {
             let total_time = Duration::from_micros(total_time.load(Relaxed));
             let max_time = Duration::from_micros(max_time.load(Relaxed));
             let n = num_done.load(Relaxed);
-            if n == 100 { break; }
-            if n == 0 {
-                println!("Working.. nothing done yet.");
-            } else {
-                println!(
-                    "Working.. {n}/100 done, {:?} average, {:?} peak",
-                    total_time / n as u32,
-                    max_time,
-                );
+
+            match n {
+                100 => break,
+                0 => println!("Working.. nothing done yet."),
+                _ => {
+                    println!(
+                        "Working.. {n}/100 done, {:?} average, {:?} peak",
+                        total_time / n as u32,
+                        max_time,
+                    );
+                }
             }
+            
             thread::sleep(Duration::from_secs(1));
         }
     });
